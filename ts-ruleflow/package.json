@@ -1,0 +1,15 @@
+{
+  "name": "ts-ruleflow",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run -w @ruleflow/dsl-core build",
+    "typecheck": "npm run -w @ruleflow/dsl-core typecheck",
+    "clean": "npm run -w @ruleflow/dsl-core clean"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

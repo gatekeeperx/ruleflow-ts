@@ -1,0 +1,32 @@
+{
+  "name": "@ruleflow/dsl-core",
+  "version": "0.1.0",
+  "description": "Ruleflow DSL interpreter in TypeScript (isomorphic, SSR+Edge compatible).",
+  "type": "commonjs",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "generate": "antlr4ts -visitor -long-messages -o src/generated src/grammar/RuleFlowLanguage.g4",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rimraf dist src/generated"
+  },
+  "dependencies": {
+    "antlr4ts": "^0.5.0-alpha.4"
+  },
+  "devDependencies": {
+    "antlr4ts-cli": "^0.5.0-alpha.4",
+    "rimraf": "^5.0.0",
+    "typescript": "^5.6.2"
+  },
+  "keywords": ["dsl", "antlr", "parser", "interpreter", "isomorphic"],
+  "license": "Apache-2.0"
+}

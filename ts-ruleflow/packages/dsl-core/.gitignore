@@ -1,0 +1,42 @@
+# Node
+node_modules/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+*.log
+
+# Build outputs
+/dist/
+/build/
+*.tsbuildinfo
+
+# Caches
+.cache/
+.turbo/
+.eslintcache
+.rollup.cache/
+.parcel-cache/
+.vite/
+
+# Tests / Coverage
+coverage/
+.nyc_output/
+
+# Editors / OS
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Env files
+.env
+.env.*
+.env.local
+
+# Note:
+# - No ignoramos src/generated/ porque el parser de ANTLR4TS se incluye en el repo para facilitar el build.
+#   Si prefieres regenerarlo en cada build, puedes ignorarlo y ejecutar `npm run generate` antes de compilar.
