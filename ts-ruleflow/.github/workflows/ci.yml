@@ -30,3 +30,6 @@ jobs:
 
       - name: Run tests (@ruleflow/dsl-tests)
         run: npm run test
+
+      - name: Build Next.js demo (@ruleflow/next-demo)
+        run: npm run -w @ruleflow/next-demo build

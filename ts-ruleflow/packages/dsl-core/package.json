@@ -16,6 +16,7 @@
   "scripts": {
     "generate": "antlr4ts -visitor -long-messages -o src/generated src/grammar/RuleFlowLanguage.g4",
     "build": "tsc -p tsconfig.json",
+    "watch": "tsc -p tsconfig.json -w",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "clean": "rimraf dist src/generated"
   },
