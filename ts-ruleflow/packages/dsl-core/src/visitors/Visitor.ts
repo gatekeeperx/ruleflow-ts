@@ -26,6 +26,11 @@ import {
   DistanceContext as GeoDistanceContext,
   DistanceGeohashContext,
   WithinRadiusContext,
+  StringDistanceContext,
+  PartialRatioContext,
+  TokenSortRatioContext,
+  TokenSetRatioContext,
+  StringSimilarityScoreContext,
 } from '../generated/src/grammar/RuleFlowLanguageParser';
 
 import { ComparatorEvaluator } from '../evaluator/ComparatorEvaluator';
@@ -54,6 +59,11 @@ import { AggregationEvaluator } from '../evaluator/AggregationEvaluator';
 import { DistanceGeohashEvaluator } from '../evaluator/geo/DistanceGeohashEvaluator';
 import { WithinRadiusEvaluator } from '../evaluator/geo/WithinRadiusEvaluator';
 import { DistanceEvaluator as GeoDistanceEvaluator } from '../evaluator/geo/DistanceEvaluator';
+import { StringDistanceEvaluator } from '../evaluator/string/StringDistanceEvaluator';
+import { PartialRatioEvaluator } from '../evaluator/string/PartialRatioEvaluator';
+import { TokenSortRatioEvaluator } from '../evaluator/string/TokenSortRatioEvaluator';
+import { TokenSetRatioEvaluator } from '../evaluator/string/TokenSetRatioEvaluator';
+import { StringSimilarityScoreEvaluator } from '../evaluator/string/StringSimilarityScoreEvaluator';
 
 export type DataMap = Record<string, unknown>;
 export type ListsMap = Record<string, unknown[]>;
@@ -123,6 +133,16 @@ export class Visitor {
       return new DistanceGeohashEvaluator().evaluate(ctx, this);
     } else if (ctx instanceof WithinRadiusContext) {
       return new WithinRadiusEvaluator().evaluate(ctx, this);
+    } else if (ctx instanceof StringDistanceContext) {
+      return new StringDistanceEvaluator().evaluate(ctx, this);
+    } else if (ctx instanceof PartialRatioContext) {
+      return new PartialRatioEvaluator().evaluate(ctx, this);
+    } else if (ctx instanceof TokenSortRatioContext) {
+      return new TokenSortRatioEvaluator().evaluate(ctx, this);
+    } else if (ctx instanceof TokenSetRatioContext) {
+      return new TokenSetRatioEvaluator().evaluate(ctx, this);
+    } else if (ctx instanceof StringSimilarityScoreContext) {
+      return new StringSimilarityScoreEvaluator().evaluate(ctx, this);
     }
 
     throw new Error(`Operation not supported: ${ctx?.constructor?.name ?? typeof ctx}`);

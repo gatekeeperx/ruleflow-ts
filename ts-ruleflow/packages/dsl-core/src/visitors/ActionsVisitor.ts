@@ -29,11 +29,11 @@ export class ActionsVisitorTs {
     // Form 1: action('name', {...})
     const kAction = (action as any).K_ACTION?.();
     if (kAction) {
-      const paramValue = (action as any).param_value;
+      const paramValue = (action as any)._param_value || (action as any).param_value;
       return stripQuotes(paramValue?.text || '');
     }
     // Form 2: action_id(...)
-    const actionId = (action as any).action_id;
+    const actionId = (action as any)._action_id || (action as any).action_id;
     if (actionId && actionId.text) {
       return stripQuotes(actionId.text);
     }
