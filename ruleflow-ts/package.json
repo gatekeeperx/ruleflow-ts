@@ -9,6 +9,7 @@
     "typecheck": "npm run -w @ruleflow/dsl-core typecheck",
     "clean": "npm run -w @ruleflow/dsl-core clean",
     "test": "npm run -w @ruleflow/dsl-tests test",
+    "smoke": "npm run -w @ruleflow/dsl-core smoke",
     "dev:next": "npm run -w @ruleflow/next-demo dev",
     "build:next": "npm run -w @ruleflow/next-demo build",
     "start:next": "npm run -w @ruleflow/next-demo start",
