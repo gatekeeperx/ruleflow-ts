@@ -10,15 +10,35 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
     }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "scripts": {
     "generate": "antlr4ts -visitor -long-messages -o src/generated src/grammar/RuleFlowLanguage.g4",
     "build": "tsc -p tsconfig.json",
     "watch": "tsc -p tsconfig.json -w",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "clean": "rimraf dist src/generated"
+    "clean": "rimraf dist src/generated",
+    "prepack": "npm run build",
+    "smoke": "node scripts/smoke.js",
+    "pack:dry": "npm pack --dry-run",
+    "prepublishOnly": "npm run typecheck && npm run build",
+    "release:patch": "npm version patch && npm publish --access public",
+    "release:minor": "npm version minor && npm publish --access public",
+    "release:major": "npm version major && npm publish --access public"
   },
   "dependencies": {
     "antlr4ts": "^0.5.0-alpha.4"
@@ -28,6 +48,12 @@
     "rimraf": "^5.0.0",
     "typescript": "^5.6.2"
   },
-  "keywords": ["dsl", "antlr", "parser", "interpreter", "isomorphic"],
+  "keywords": [
+    "dsl",
+    "antlr",
+    "parser",
+    "interpreter",
+    "isomorphic"
+  ],
   "license": "Apache-2.0"
 }

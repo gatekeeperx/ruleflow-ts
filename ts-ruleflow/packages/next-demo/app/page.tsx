@@ -357,8 +357,6 @@ export default function HomePage() {
             </select>
             <input className="input" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="/api/evaluate" />
             <button className="btn" onClick={onEvaluate} disabled={loading}>{loading ? 'Sending...' : 'Send'}</button>
-            <button className="btn btn-secondary" onClick={() => runCase(selectedCaseId)}>Run caso</button>
-            <button className="btn btn-ghost" onClick={() => loadCase(selectedCaseId)}>Cargar caso</button>
           </div>
 
           {error && <pre className="error">{error}</pre>}
