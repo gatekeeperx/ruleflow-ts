@@ -1,7 +1,7 @@
 # Ruleflow TS Monorepo
 
 [![CI](https://github.com/gatekeeperx/ruleflow-ts/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/gatekeeperx/ruleflow-ts/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/gatekeeperx/ruleflow-ts/branch/master/graph/badge.svg)](https://codecov.io/gh/gatekeeperx/ruleflow-ts)
+[![coverage](./badges/coverage.svg)](./badges/coverage.svg)
 
 Monorepo for the Ruleflow DSL, including:
 
