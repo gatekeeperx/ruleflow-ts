@@ -1,4 +1,4 @@
-# Ruleflow TS Monorepo
+# Ruleflow TS
 
 [![CI](https://github.com/gatekeeperx/ruleflow-ts/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/gatekeeperx/ruleflow-ts/actions/workflows/ci.yml)
 [![coverage](./badges/coverage.svg)](./badges/coverage.svg)
