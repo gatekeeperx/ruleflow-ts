@@ -1,6 +1,17 @@
 {
   "name": "ts-ruleflow",
+  "description": "Monorepo for Ruleflow DSL: core interpreter, tests, and Next.js demo.",
+  "license": "MIT",
   "private": true,
+  "author": "Rodolfo Rivas",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gatekeeperx/ruleflow-ts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gatekeeperx/ruleflow-ts/issues"
+  },
+  "homepage": "https://github.com/gatekeeperx/ruleflow-ts#readme",
   "workspaces": [
     "packages/*"
   ],
@@ -8,7 +19,8 @@
     "build": "npm run -w @ruleflow/dsl-core build",
     "typecheck": "npm run -w @ruleflow/dsl-core typecheck",
     "clean": "npm run -w @ruleflow/dsl-core clean",
-    "test": "npm run -w @ruleflow/dsl-tests test",
+    "test": "npm run test:coverage",
+    "test:coverage": "npm run -w @ruleflow/dsl-tests test:coverage",
     "smoke": "npm run -w @ruleflow/dsl-core smoke",
     "dev:next": "npm run -w @ruleflow/next-demo dev",
     "build:next": "npm run -w @ruleflow/next-demo build",

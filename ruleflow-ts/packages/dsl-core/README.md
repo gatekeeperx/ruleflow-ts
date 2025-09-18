@@ -1,45 +1,45 @@
 # @ruleflow/dsl-core
 
-Intérprete del lenguaje de reglas Ruleflow escrito en TypeScript. Funciona en entornos isomórficos (Node, SSR y Edge) y expone una API sencilla para parsear y evaluar flujos de reglas definidos en DSL.
+TypeScript interpreter for the Ruleflow DSL. It runs in isomorphic environments (Node, SSR, and potentially Edge) and exposes a simple API to parse and evaluate rule workflows defined in a DSL.
 
 - Node >= 18
-- Basado en ANTLR4TS para la gramática
-- Salida CommonJS + tipos (`.d.ts`)
+- Based on ANTLR4TS for the grammar
+- CommonJS output + type definitions (`.d.ts`)
 
-## Características
+## Features
 
-- Expresiones aritméticas y de comparación: `+ - * / %`, `< <= > >= == <> =` (case-insensitive)
-- Lógicos: `and`, `or`, `not`
-- Listas: `contains`, `in`, `starts_with` con listas literales, listas almacenadas `list('key')` o propiedades
-- Agregaciones: `count()`, `average()`, `any{...}`, `all{...}`, `none{...}`, `distinct()`
-- Fechas: `dateDiff`, `day_of_week`, `now()`, `date_add`, `date_subtract`, `date(...)`, `datetime(...)`
-- Regex utilitario: `regex_strip(prop, 're')`
-- Unarios: `abs(expr)`
+- Arithmetic and comparison expressions: `+ - * / %`, `< <= > >= == <> =` (case-insensitive)
+- Logical operators: `and`, `or`, `not`
+- Lists: `contains`, `in`, `starts_with` with literal lists, stored lists `list('key')`, or properties
+- Aggregations: `count()`, `average()`, `any{...}`, `all{...}`, `none{...}`, `distinct()`
+- Dates: `dateDiff`, `day_of_week`, `now()`, `date_add`, `date_subtract`, `date(...)`, `datetime(...)`
+- Regex utility: `regex_strip(prop, 're')`
+- Unary: `abs(expr)`
 - Geo: `geohash_encode`, `geohash_decode`, `distance`, `within_radius`
-- Acciones: `action('nombre', { 'k': 'v' })` y parámetros usando propiedades (`{'id': user.id}`)
-- Modo de evaluación: `evaluation_mode multi_match` (o por defecto `single_match`)
+- Actions: `action('name', { 'k': 'v' })` with params using properties (`{'id': user.id}`)
+- Evaluation mode: `evaluation_mode multi_match` (or default `single_match`)
 
-## Instalación y build
+## Install & Build
 
-Este paquete forma parte del workspace `ts-ruleflow`.
+This package is part of the `ts-ruleflow` workspace.
 
 ```bash
-# desde ts-ruleflow/
+# from ts-ruleflow/
 npm install
 npm run typecheck
 npm run build
 ```
 
-Scripts disponibles en `packages/dsl-core/package.json`:
+Available scripts in `packages/dsl-core/package.json`:
 
-- `generate`: genera el parser con antlr4ts a partir de `src/grammar/RuleFlowLanguage.g4`
-- `typecheck`: comprobación de tipos con TypeScript sin emitir archivos
-- `build`: compila a `dist/`
-- `clean`: limpia `dist/` y `src/generated/`
+- `generate`: generates the parser with antlr4ts from `src/grammar/RuleFlowLanguage.g4`
+- `typecheck`: TypeScript type-check without emitting files
+- `build`: compiles into `dist/`
+- `clean`: removes `dist/` and `src/generated/`
 
-> Nota: el código generado por ANTLR se incluye en el repo para facilitar el build. Si modificas la gramática, ejecuta `npm run generate` antes del build.
+> Note: the ANTLR generated code is included in the repo for easier builds. If you change the grammar, run `npm run generate` before building.
 
-## Uso básico
+## Basic Usage
 
 ```ts
 import { Workflow } from '@ruleflow/dsl-core';
@@ -51,7 +51,7 @@ const dsl = `workflow 'w'
 end`;
 
 const data = { user: { id: '42', age: 20 }, country: 'US' };
-const lists = {}; // opcional
+const lists = {}; // optional
 
 const wf = new Workflow(dsl);
 const result = wf.evaluate(data, lists);
@@ -68,21 +68,21 @@ console.log(result);
 // }
 ```
 
-### Api principal
+### Main API
 
 - `new Workflow(dsl: string)`
 - `evaluate(request: InputMap, lists?: ListsMap): WorkflowResult`
 - `validateAndGetWorkflowName(): string`
 
-Tipos relevantes (ver `src/types.ts`):
+Relevant types (see `src/types.ts`):
 
 - `InputMap = Record<string, unknown>`
 - `ListsMap = Record<string, unknown[]>`
-- `WorkflowResult` contiene `workflow`, `ruleSet`, `rule`, `result`, `actions`, `warnings`, `matchedRules?`, `error?`
+- `WorkflowResult` includes `workflow`, `ruleSet`, `rule`, `result`, `actions`, `warnings`, `matchedRules?`, `error?`
 
-## Ejemplos del DSL
+## DSL Examples
 
-- Agregaciones:
+- Aggregations:
 
 ```sql
 items.count() = 3
@@ -91,7 +91,7 @@ items.none{ 'blocked' } = true
 items.distinct()
 ```
 
-- Fechas:
+- Dates:
 
 ```sql
 dateDiff('2025-01-01T00:00:00Z', '2025-01-02T00:00:00Z', day) = 1
@@ -106,11 +106,11 @@ datetime(now()) > '2000-01-01T00:00:00Z'
 ```sql
 distance(37.7749, -122.4194, 34.0522, -118.2437) > 500
 within_radius(37.7749, -122.4194, 37.7750, -122.4195, 1) = true
-# con geohash
+# with geohash
 distance(geohash_encode(37.7749, -122.4194, 7), geohash_encode(37.7750, -122.4195, 7)) < 0.5
 ```
 
-- Modo multi-match:
+- Multi-match mode:
 
 ```sql
 workflow 'w'
@@ -122,17 +122,17 @@ workflow 'w'
 end
 ```
 
-En este caso `evaluate()` devuelve `matchedRules` con todas las reglas que aplicaron, y el `result` de la primera coincidencia.
+In this case `evaluate()` returns `matchedRules` with all matching rules, and `result` is the value of the first match.
 
-## Integración con Next.js (App Router) y Serverless
+## Next.js Integration (App Router) and Serverless
 
-A continuación se muestran patrones recomendados para usar `@ruleflow/dsl-core` directamente desde páginas Next.js, sin necesidad de un API Route, así como consideraciones para entornos Serverless y Edge.
+Recommended patterns for using `@ruleflow/dsl-core` directly from Next.js pages, without an API Route, plus considerations for Serverless and Edge environments.
 
-> Requisitos: Next.js 14+ (App Router) y Node.js 18+. Si tu despliegue exige Edge Runtime, revisa la sección "Edge Runtime" más abajo.
+> Requirements: Next.js 14+ (App Router) and Node.js 18+. If your deployment requires Edge Runtime, review the "Edge Runtime" section below.
 
-### 1) Server Actions (recomendado)
+### 1) Server Actions (recommended)
 
-Usa una Server Action para evaluar el DSL en el servidor, invocándola desde tu componente cliente. Es simple, evita exponer el DSL por red a un endpoint y mantiene el bundle del cliente ligero.
+Use a Server Action to evaluate the DSL on the server, invoked from a client component. It avoids exposing the DSL over the network and keeps the client bundle light.
 
 `app/actions/evaluate.ts`:
 
@@ -148,14 +148,14 @@ export async function evaluateDsl(input: { dsl: string; data?: any; lists?: any 
 }
 ```
 
-`app/page.tsx` (cliente):
+`app/page.tsx` (client):
 
 ```tsx
 'use client';
 import { useState } from 'react';
 import { evaluateDsl } from './actions/evaluate';
 
-export const runtime = 'nodejs'; // asegura Node.js runtime si tu paquete es CJS
+export const runtime = 'nodejs'; // ensure Node.js runtime if your package is CJS
 
 export default function Page() {
   const [dsl, setDsl] = useState("workflow 'w'\n  ruleset 'rs'\n    'r1' 1 = 1 return 'ok'\n  default 'ko'\nend");
@@ -172,7 +172,7 @@ export default function Page() {
 
   return (
     <div>
-      {/* textareas para dsl/data/lists */}
+      {/* textareas for dsl/data/lists */}
       <button onClick={onSend}>Send</button>
       <pre>{out}</pre>
     </div>
@@ -180,13 +180,13 @@ export default function Page() {
 }
 ```
 
-Notas:
-- Si usas CommonJS en el core, fija `export const runtime = 'nodejs'` en el segmento actual para evitar el Edge runtime.
-- Para inputs variables del usuario, evita caching con `export const dynamic = 'force-dynamic'` o `unstable_noStore()`.
+Notes:
+- If you use CommonJS in the core, set `export const runtime = 'nodejs'` in the current segment to avoid Edge runtime.
+- For user-provided inputs, avoid caching with `export const dynamic = 'force-dynamic'` or `unstable_noStore()`.
 
-### 2) Server Component (SSR en render)
+### 2) Server Component (SSR during render)
 
-Evalúa durante el render del servidor sin Server Action. Útil si la entrada viene de `searchParams` o datos del servidor.
+Evaluate during server render without a Server Action. Useful if input comes from `searchParams` or server data.
 
 ```tsx
 import { Workflow } from '@ruleflow/dsl-core';
@@ -204,9 +204,9 @@ export default async function Page({ searchParams }: { searchParams: { dsl?: str
 }
 ```
 
-### 3) Client Component (evaluación en el navegador)
+### 3) Client Component (evaluate in the browser)
 
-Importa el core en el cliente y evalúa localmente. Recomendado para demos offline; considera el peso del bundle.
+Import the core in the client and evaluate locally. Good for offline demos; consider bundle size.
 
 ```tsx
 'use client';
@@ -217,7 +217,7 @@ export default function Page() {
   const [out, setOut] = useState('');
 
   async function onSend() {
-    // Carga diferida para reducir TTI
+    // Deferred loading to reduce TTI
     const { Workflow } = await import('@ruleflow/dsl-core');
     const wf = new Workflow(dsl);
     const res = wf.evaluate({}, {});
@@ -228,12 +228,12 @@ export default function Page() {
 }
 ```
 
-Consideraciones:
-- El bundle incluirá el parser; si el tamaño es crítico, prefiere Server Actions.
+Considerations:
+- The bundle will include the parser; if size matters, prefer Server Actions.
 
-### 4) Alternativa con API Route (si prefieres endpoint)
+### 4) Alternative with API Route (if you prefer an endpoint)
 
-Puedes exponer un endpoint `POST /api/evaluate` y consumirlo desde la UI:
+Expose a `POST /api/evaluate` endpoint and consume it from the UI:
 
 ```ts
 // app/api/evaluate/route.ts
@@ -245,7 +245,7 @@ export const runtime = 'nodejs';
 export async function POST(req: NextRequest) {
   const { dsl, data = {}, lists = {} } = await req.json();
   if (typeof dsl !== 'string' || !dsl.trim()) {
-    return NextResponse.json({ message: 'Campo dsl es requerido' }, { status: 400 });
+    return NextResponse.json({ message: 'Field dsl is required' }, { status: 400 });
   }
   const wf = new Workflow(dsl);
   const result = wf.evaluate(data, lists);
@@ -253,44 +253,38 @@ export async function POST(req: NextRequest) {
 }
 ```
 
-### Serverless y Edge Runtime
+## Serverless and Edge Runtime
 
-- Node.js Serverless (Vercel/Netlify): funciona out-of-the-box con `runtime = 'nodejs'`.
-- Edge Runtime: requiere que las dependencias sean ESM puras. Si tu build actual es CommonJS, usa `runtime = 'nodejs'` o publica un paquete dual (ESM + CJS). Ejemplo Edge (si el core es ESM-compatible):
+- Node.js Serverless (Vercel/Netlify): works out-of-the-box with `runtime = 'nodejs'`.
+- Edge Runtime: requires ESM-only dependencies. If your build is CommonJS, use `runtime = 'nodejs'` or publish a dual package (ESM + CJS). Edge example (if the core is ESM-compatible):
 
 ```ts
 export const runtime = 'edge';
 import { Workflow } from '@ruleflow/dsl-core';
 ```
 
-Recomendaciones:
-- **Seguridad**: valida el DSL y limita tamaño/tiempo (timeouts) si la entrada es de usuarios externos.
-- **Caching**: para entradas dinámicas usa `noStore()`/`dynamic = 'force-dynamic'`.
-- **Tamaños**: en cliente usa `import()` dinámico para reducir el coste inicial.
+Recommendations:
+- Security: validate DSL and limit input size/time if accepting user-provided DSL.
+- Caching: for dynamic inputs use `noStore()`/`dynamic = 'force-dynamic'`.
+- Sizes: in the client use dynamic `import()` to reduce initial cost.
 
-### Tipos y resultado
+## Types and Result
 
 - `new Workflow(dsl)`
 - `evaluate(data?: InputMap, lists?: ListsMap): WorkflowResult`
-- `WorkflowResult` puede incluir `result`, `warnings`, `actions` y `matchedRules` (en `evaluation_mode multi_match`).
+- `WorkflowResult` may include `result`, `warnings`, `actions`, and `matchedRules` (in `evaluation_mode multi_match`).
 
-## Desarrollo
+## Development
 
-- Cambiaste la gramática: `npm run generate`
+- Grammar changed: `npm run generate`
 - Typecheck: `npm run typecheck`
 - Build: `npm run build`
-- Prueba rápida (smoke):
+- Quick smoke test:
 
 ```bash
 node scripts/smoke.js
 ```
 
-## Buenas prácticas y notas
+## License
 
-- En evaluaciones de listas y agregaciones, el predicado se evalúa en el contexto de cada elemento de la colección.
-- Para evitar errores de properties faltantes, maneja `warnings` en el resultado.
-- Si publicas a NPM, considera añadir un `prepack` que ejecute `npm run build`.
-
-## Licencia
-
-Apache-2.0
+MIT

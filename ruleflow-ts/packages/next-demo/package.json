@@ -2,7 +2,7 @@
   "name": "@ruleflow/next-demo",
   "version": "0.1.0",
   "private": true,
-  "description": "Demo Next.js que consume @ruleflow/dsl-core y expone un evaluador via API",
+  "description": "Next.js demo that consumes @ruleflow/dsl-core and exposes an evaluator via API",
   "scripts": {
     "predev": "npm run -w @ruleflow/dsl-core build",
     "dev": "next dev -p 3000",

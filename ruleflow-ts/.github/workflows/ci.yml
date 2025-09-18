@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
 
 jobs:
   build-and-test:
@@ -25,11 +25,34 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Build core
+      - name: Typecheck core (@ruleflow/dsl-core)
+        run: npm run -w @ruleflow/dsl-core typecheck
+
+      - name: Build core (@ruleflow/dsl-core)
         run: npm run -w @ruleflow/dsl-core build
 
       - name: Run tests (@ruleflow/dsl-tests)
         run: npm run test
+
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.node-version }}
+          path: packages/dsl-tests/coverage
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Upload coverage to Codecov
+        if: always()
+        uses: codecov/codecov-action@v4
+        with:
+          files: packages/dsl-tests/coverage/lcov.info
+          flags: unit
+          fail_ci_if_error: false
+
+      - name: Run smoke (@ruleflow/dsl-core)
+        run: npm run smoke
 
       - name: Build Next.js demo (@ruleflow/next-demo)
         run: npm run -w @ruleflow/next-demo build

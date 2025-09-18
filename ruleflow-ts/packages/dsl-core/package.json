@@ -23,6 +23,16 @@
   "publishConfig": {
     "access": "public"
   },
+  "author": "Rodolfo Rivas",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gatekeeperx/ruleflow-ts.git",
+    "directory": "packages/dsl-core"
+  },
+  "bugs": {
+    "url": "https://github.com/gatekeeperx/ruleflow-ts/issues"
+  },
+  "homepage": "https://github.com/gatekeeperx/ruleflow-ts/tree/master/packages/dsl-core#readme",
   "engines": {
     "node": ">=18"
   },
@@ -55,5 +65,5 @@
     "interpreter",
     "isomorphic"
   ],
-  "license": "Apache-2.0"
+  "license": "MIT"
 }
