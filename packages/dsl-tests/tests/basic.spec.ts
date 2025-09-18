@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { Workflow } from '@ruleflow/dsl-core';
+import { Workflow } from '@ruleflow-ts/dsl-core';
 
 function run(dsl: string, data: any = {}, lists: any = {}) {
   const wf = new Workflow(dsl);
   return wf.evaluate(data, lists);
 }
 
-describe('@ruleflow/dsl-core golden tests', () => {
+describe('@ruleflow-ts/dsl-core golden tests', () => {
   it('math precedence and return string', () => {
     const dsl = `workflow 'w'
   ruleset 'rs'

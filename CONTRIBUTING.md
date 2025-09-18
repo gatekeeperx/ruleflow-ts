@@ -54,9 +54,9 @@ Use clear and descriptive messages. Conventional commits are welcome but not req
 Releases are published only for the core package:
 
 ```bash
-npm run -w @ruleflow/dsl-core release:patch
-npm run -w @ruleflow/dsl-core release:minor
-npm run -w @ruleflow/dsl-core release:major
+npm run -w @ruleflow-ts/dsl-core release:patch
+npm run -w @ruleflow-ts/dsl-core release:minor
+npm run -w @ruleflow-ts/dsl-core release:major
 ```
 
 ## License

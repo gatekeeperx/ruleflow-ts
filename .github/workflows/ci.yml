@@ -27,11 +27,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Typecheck core (@ruleflow/dsl-core)
-        run: npm run -w @ruleflow/dsl-core typecheck
+      - name: Typecheck core (@ruleflow-ts/dsl-core)
+        run: npm run -w @ruleflow-ts/dsl-core typecheck
 
-      - name: Build core (@ruleflow/dsl-core)
-        run: npm run -w @ruleflow/dsl-core build
+      - name: Build core (@ruleflow-ts/dsl-core)
+        run: npm run -w @ruleflow-ts/dsl-core build
 
       - name: Run tests (@ruleflow/dsl-tests)
         run: npm run test
@@ -72,7 +72,7 @@ jobs:
           fail_ci_if_error: false
           # token: ${{ secrets.CODECOV_TOKEN }}
 
-      - name: Run smoke (@ruleflow/dsl-core)
+      - name: Run smoke (@ruleflow-ts/dsl-core)
         run: npm run smoke
 
       - name: Build Next.js demo (@ruleflow/next-demo)

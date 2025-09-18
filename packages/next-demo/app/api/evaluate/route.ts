@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { Workflow } from '@ruleflow/dsl-core';
+import { Workflow } from '@ruleflow-ts/dsl-core';
 
 export const runtime = 'nodejs';
 

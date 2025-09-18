@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { Workflow } from '@ruleflow/dsl-core';
+import { Workflow } from '@ruleflow-ts/dsl-core';
 
 const run = (dsl: string, data: any = {}, lists: any = {}) => new Workflow(dsl).evaluate(data, lists);
 

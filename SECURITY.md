@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-We support security fixes for the latest released version of `@ruleflow/dsl-core`. Older versions may not receive patches.
+We support security fixes for the latest released version of `@ruleflow-ts/dsl-core`. Older versions may not receive patches.
 
 ## Reporting a Vulnerability
 
@@ -18,7 +18,7 @@ We support security fixes for the latest released version of `@ruleflow/dsl-core
 
 ## Scope
 
-- The primary scope is the `@ruleflow/dsl-core` package published on npm (if/when available).
+- The primary scope is the `@ruleflow-ts/dsl-core` package published on npm (if/when available).
 - Demo apps and private packages are considered out of scope for security fixes but we still welcome reports.
 
 ## Responsible Disclosure

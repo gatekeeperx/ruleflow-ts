@@ -3,7 +3,7 @@ import { defineConfig } from 'vitest/config';
 
 // Rutas absolutas y globs POSIX para los fuentes de dsl-core
 const DSL_CORE_SRC = path.resolve(__dirname, '../dsl-core/src');
-const DSL_CORE_SRC_NODE = path.resolve(__dirname, 'node_modules/@ruleflow/dsl-core/src');
+const DSL_CORE_SRC_NODE = path.resolve(__dirname, 'node_modules/@ruleflow-ts/dsl-core/src');
 const toPosix = (p: string) => p.split(path.sep).join('/');
 const DSL_CORE_GLOB = `${toPosix(DSL_CORE_SRC)}/**/*.{ts,tsx,js}`;
 const DSL_CORE_NODE_GLOB = `${toPosix(DSL_CORE_SRC_NODE)}/**/*.{ts,tsx,js}`;
@@ -25,14 +25,14 @@ export default defineConfig({
         deps: {
             optimizer: {
                 ssr: {
-                    exclude: ['@ruleflow/dsl-core'],
+                    exclude: ['@ruleflow-ts/dsl-core'],
                 }
             }
         }
     },
     resolve: {
         alias: {
-            '@ruleflow/dsl-core': path.resolve(__dirname, '../dsl-core/src/index.ts')
+            '@ruleflow-ts/dsl-core': path.resolve(__dirname, '../dsl-core/src/index.ts')
         }
     },
     server: {
@@ -41,6 +41,6 @@ export default defineConfig({
         }
     },
     ssr: {
-        noExternal: ['@ruleflow/dsl-core']
+        noExternal: ['@ruleflow-ts/dsl-core']
     }
 });
