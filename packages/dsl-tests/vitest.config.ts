@@ -15,7 +15,7 @@ export default defineConfig({
         includeSource: [DSL_CORE_GLOB, DSL_CORE_NODE_GLOB],
         coverage: {
             provider: 'v8',
-            reporter: ['text', 'html', 'lcov'],
+            reporter: ['text', 'html', 'lcov', 'json-summary'],
             reportsDirectory: 'coverage',
             all: true,
             allowExternal: true,
