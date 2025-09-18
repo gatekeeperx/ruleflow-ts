@@ -40,7 +40,7 @@ jobs:
         run: mkdir -p badges
 
       - name: Create coverage badge (local)
-        uses: jaywcjlove/coverage-badges-cli@v1
+        uses: jaywcjlove/coverage-badges-cli@v2.2.0
         with:
           source: packages/dsl-tests/coverage/coverage-summary.json
           output: badges/coverage.svg
