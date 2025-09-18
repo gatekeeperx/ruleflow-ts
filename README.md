@@ -5,8 +5,8 @@
 
 Monorepo for the Ruleflow DSL, including:
 
-- `@ruleflow/dsl-core`: TypeScript interpreter for the Ruleflow DSL (Node / SSR / Edge-friendly).
-- `@ruleflow/dsl-tests`: Golden tests for `@ruleflow/dsl-core` using Vitest.
+- `@ruleflow-ts/dsl-core`: TypeScript interpreter for the Ruleflow DSL (Node / SSR / Edge-friendly).
+- `@ruleflow/dsl-tests`: Golden tests for `@ruleflow-ts/dsl-core` using Vitest.
 - `@ruleflow/next-demo`: Next.js demo that consumes the core package and exposes an evaluator.
 
 > Requirements: Node.js >= 18
@@ -22,10 +22,10 @@ npm run build
 
 Useful scripts:
 
-- `npm run build`: builds `@ruleflow/dsl-core`
-- `npm run typecheck`: type-checks `@ruleflow/dsl-core`
+- `npm run build`: builds `@ruleflow-ts/dsl-core`
+- `npm run typecheck`: type-checks `@ruleflow-ts/dsl-core`
 - `npm test`: runs Vitest with coverage in `@ruleflow/dsl-tests`
-- `npm run smoke`: runs a smoke test for `@ruleflow/dsl-core`
+- `npm run smoke`: runs a smoke test for `@ruleflow-ts/dsl-core`
 - `npm run dev:next`: starts the Next.js demo in dev mode
 
 ## Packages
@@ -59,7 +59,7 @@ Please see [SECURITY.md](./SECURITY.md) for our vulnerability disclosure policy.
 
 ## Publishing
 
-Only `@ruleflow/dsl-core` is meant for publication to npm.
+Only `@ruleflow-ts/dsl-core` is meant for publication to npm.
 
 - License: MIT
 - `files`: includes `dist/`, `README.md`, and `LICENSE`
@@ -68,15 +68,15 @@ Only `@ruleflow/dsl-core` is meant for publication to npm.
 Run a dry run:
 
 ```bash
-npm run -w @ruleflow/dsl-core pack:dry
+npm run -w @ruleflow-ts/dsl-core pack:dry
 ```
 
 Release helpers:
 
 ```bash
-npm run -w @ruleflow/dsl-core release:patch
-npm run -w @ruleflow/dsl-core release:minor
-npm run -w @ruleflow/dsl-core release:major
+npm run -w @ruleflow-ts/dsl-core release:patch
+npm run -w @ruleflow-ts/dsl-core release:minor
+npm run -w @ruleflow-ts/dsl-core release:major
 ```
 
 ## License

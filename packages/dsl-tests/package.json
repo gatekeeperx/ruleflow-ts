@@ -4,16 +4,16 @@
   "private": true,
   "license": "MIT",
   "type": "commonjs",
-  "description": "Golden tests for @ruleflow/dsl-core using Vitest",
+  "description": "Golden tests for @ruleflow-ts/dsl-core using Vitest",
   "scripts": {
-    "pretest": "npm run -w @ruleflow/dsl-core build",
-    "pretest:coverage": "npm run -w @ruleflow/dsl-core build",
+    "pretest": "npm run -w @ruleflow-ts/dsl-core build",
+    "pretest:coverage": "npm run -w @ruleflow-ts/dsl-core build",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage --reporter=default",
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@ruleflow/dsl-core": "file:../dsl-core"
+    "@ruleflow-ts/dsl-core": "file:../dsl-core"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^1.6.1",

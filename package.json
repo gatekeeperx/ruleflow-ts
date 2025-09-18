@@ -16,16 +16,16 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run -w @ruleflow/dsl-core build",
-    "typecheck": "npm run -w @ruleflow/dsl-core typecheck",
-    "clean": "npm run -w @ruleflow/dsl-core clean",
+    "build": "npm run -w @ruleflow-ts/dsl-core build",
+    "typecheck": "npm run -w @ruleflow-ts/dsl-core typecheck",
+    "clean": "npm run -w @ruleflow-ts/dsl-core clean",
     "test": "npm run test:coverage",
     "test:coverage": "npm run -w @ruleflow/dsl-tests test:coverage",
-    "smoke": "npm run -w @ruleflow/dsl-core smoke",
+    "smoke": "npm run -w @ruleflow-ts/dsl-core smoke",
     "dev:next": "npm run -w @ruleflow/next-demo dev",
     "build:next": "npm run -w @ruleflow/next-demo build",
     "start:next": "npm run -w @ruleflow/next-demo start",
-    "dev:all": "concurrently -n core,next -c green,cyan \"npm run -w @ruleflow/dsl-core watch\" \"npm run -w @ruleflow/next-demo dev\""
+    "dev:all": "concurrently -n core,next -c green,cyan \"npm run -w @ruleflow-ts/dsl-core watch\" \"npm run -w @ruleflow/next-demo dev\""
   },
   "engines": {
     "node": ">=18"

@@ -1,4 +1,4 @@
-# @ruleflow/dsl-core
+# @ruleflow-ts/dsl-core
 
 TypeScript interpreter for the Ruleflow DSL. It runs in isomorphic environments (Node, SSR, and potentially Edge) and exposes a simple API to parse and evaluate rule workflows defined in a DSL.
 
@@ -42,7 +42,7 @@ Available scripts in `packages/dsl-core/package.json`:
 ## Basic Usage
 
 ```ts
-import { Workflow } from '@ruleflow/dsl-core';
+import { Workflow } from '@ruleflow-ts/dsl-core';
 
 const dsl = `workflow 'w'
   ruleset 'eligibility'
@@ -126,7 +126,7 @@ In this case `evaluate()` returns `matchedRules` with all matching rules, and `r
 
 ## Next.js Integration (App Router) and Serverless
 
-Recommended patterns for using `@ruleflow/dsl-core` directly from Next.js pages, without an API Route, plus considerations for Serverless and Edge environments.
+Recommended patterns for using `@ruleflow-ts/dsl-core` directly from Next.js pages, without an API Route, plus considerations for Serverless and Edge environments.
 
 > Requirements: Next.js 14+ (App Router) and Node.js 18+. If your deployment requires Edge Runtime, review the "Edge Runtime" section below.
 
@@ -139,7 +139,7 @@ Use a Server Action to evaluate the DSL on the server, invoked from a client com
 ```ts
 'use server';
 
-import { Workflow } from '@ruleflow/dsl-core';
+import { Workflow } from '@ruleflow-ts/dsl-core';
 
 export async function evaluateDsl(input: { dsl: string; data?: any; lists?: any }) {
   const { dsl, data = {}, lists = {} } = input || {};
@@ -189,7 +189,7 @@ Notes:
 Evaluate during server render without a Server Action. Useful if input comes from `searchParams` or server data.
 
 ```tsx
-import { Workflow } from '@ruleflow/dsl-core';
+import { Workflow } from '@ruleflow-ts/dsl-core';
 import { unstable_noStore as noStore } from 'next/cache';
 
 export const runtime = 'nodejs';
@@ -218,7 +218,7 @@ export default function Page() {
 
   async function onSend() {
     // Deferred loading to reduce TTI
-    const { Workflow } = await import('@ruleflow/dsl-core');
+    const { Workflow } = await import('@ruleflow-ts/dsl-core');
     const wf = new Workflow(dsl);
     const res = wf.evaluate({}, {});
     setOut(JSON.stringify(res, null, 2));
@@ -238,7 +238,7 @@ Expose a `POST /api/evaluate` endpoint and consume it from the UI:
 ```ts
 // app/api/evaluate/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { Workflow } from '@ruleflow/dsl-core';
+import { Workflow } from '@ruleflow-ts/dsl-core';
 
 export const runtime = 'nodejs';
 
@@ -260,7 +260,7 @@ export async function POST(req: NextRequest) {
 
 ```ts
 export const runtime = 'edge';
-import { Workflow } from '@ruleflow/dsl-core';
+import { Workflow } from '@ruleflow-ts/dsl-core';
 ```
 
 Recommendations:

@@ -1,6 +1,6 @@
 export const metadata = {
   title: 'Ruleflow Next.js Demo',
-  description: 'Evaluador de DSL con @ruleflow/dsl-core',
+  description: 'Evaluador de DSL con @ruleflow-ts/dsl-core',
 };
 
 import './globals.css';
