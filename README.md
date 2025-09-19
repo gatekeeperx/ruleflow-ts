@@ -73,7 +73,9 @@ npm run -w @ruleflow-ts/dsl-core pack:dry
 
 Release helpers:
 
+Manual publish and release helpers:
 ```bash
+npm publish -w @ruleflow-ts/dsl-core --access public
 npm run -w @ruleflow-ts/dsl-core release:patch
 npm run -w @ruleflow-ts/dsl-core release:minor
 npm run -w @ruleflow-ts/dsl-core release:major
