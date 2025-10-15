@@ -7,6 +7,8 @@ import { ErrorListener } from './listeners/ErrorListener';
 import type { InputMap, ListsMap, WorkflowResult } from './types';
 import { RulesetVisitor } from './visitors/RulesetVisitor';
 import type { ParseContext } from './generated/src/grammar/RuleFlowLanguageParser';
+import { AstSerializer } from './visitors/AstSerializer';
+import type { AstWorkflow } from './visitors/AstSerializer';
 
 export class Workflow {
   private tree: any;
@@ -44,6 +46,11 @@ export class Workflow {
     return this.stripQuotes(raw);
   }
 
+  toJSON(): AstWorkflow {
+    const serializer = new AstSerializer();
+    return serializer.serialize(this.tree as ParseContext);
+  }
+
   private stripQuotes(s: string): string {
     if ((s.startsWith("'") && s.endsWith("'")) || (s.startsWith('"') && s.endsWith('"'))) {
       return s.substring(1, s.length - 1);
@@ -51,3 +58,4 @@ export class Workflow {
     return s;
   }
 }
+
