@@ -1,4 +1,5 @@
 import type { ParseContext } from '../generated/src/grammar/RuleFlowLanguageParser';
+import type { Token } from 'antlr4ts/Token';
 
 export interface AstWorkflow {
   type: 'Workflow';
@@ -101,6 +102,25 @@ function parsePropertyPath(text: string): string[] {
 }
 
 export class AstSerializer {
+  constructor(private readonly source?: string) {}
+
+  private textOf(node: { start?: Token; stop?: Token; text?: string } | undefined): string {
+    if (
+      this.source &&
+      node &&
+      node.start &&
+      node.stop &&
+      typeof (node.start as any).startIndex === 'number' &&
+      typeof (node.stop as any).stopIndex === 'number'
+    ) {
+      const a = (node.start as any).startIndex as number;
+      const b = (node.stop as any).stopIndex as number;
+      if (a >= 0 && b >= a && b + 1 <= this.source.length) {
+        return this.source.substring(a, b + 1);
+      }
+    }
+    return String((node as any)?.text || '');
+  }
   serialize(root: ParseContext): AstWorkflow {
     const wf = root.workflow();
     if (!wf) throw new Error('No workflow found');
@@ -127,7 +147,7 @@ export class AstSerializer {
   private serializeRuleset(ctx: any): AstRuleset {
     const name = stripQuotes(ctx.name().text || '');
     const condCtx = ctx.ruleset_condition?.();
-    const condition = condCtx ? { kind: 'expr' as const, text: String(condCtx.expr(0).text || '') } : undefined;
+    const condition = condCtx ? { kind: 'expr' as const, text: this.textOf(condCtx.expr(0)) } : undefined;
 
     const rules = ctx.rules().map((r: any) => this.serializeRule(r));
 
@@ -138,7 +158,7 @@ export class AstSerializer {
     const name = stripQuotes(ctx.name().text || '');
     const body = ctx.rule_body();
 
-    const predicateText = body.expr().text || '';
+    const predicateText = this.textOf(body.expr());
     const retCtx = body.return_result?.();
     const result = this.serializeReturn(retCtx) || { kind: 'state', value: 'allow' };
     const actions = this.serializeActions(body.actions?.());
@@ -165,7 +185,7 @@ export class AstSerializer {
     if (vv) return { kind: 'value', value: parseValidValueText(vv.text || '') };
 
     const expr0 = ret.expr?.(0);
-    if (expr0) return { kind: 'expr' as const, text: expr0.text || '' };
+    if (expr0) return { kind: 'expr' as const, text: this.textOf(expr0) };
 
     return { kind: 'state', value: 'allow' };
   }

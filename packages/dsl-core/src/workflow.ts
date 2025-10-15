@@ -12,8 +12,10 @@ import type { AstWorkflow } from './visitors/AstSerializer';
 
 export class Workflow {
   private tree: any;
+  private readonly source: string;
 
   constructor(workflow: string) {
+    this.source = workflow;
     const input = CharStreams.fromString(workflow);
     const lexer = new RuleFlowLanguageLexer(input as any);
     const tokens = new CommonTokenStream(lexer as any);
@@ -47,7 +49,7 @@ export class Workflow {
   }
 
   toJSON(): AstWorkflow {
-    const serializer = new AstSerializer();
+    const serializer = new AstSerializer(this.source);
     return serializer.serialize(this.tree as ParseContext);
   }
 
