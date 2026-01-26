@@ -31,6 +31,7 @@ import {
   TokenSortRatioContext,
   TokenSetRatioContext,
   StringSimilarityScoreContext,
+  EvalInListContext,
 } from '../generated/src/grammar/RuleFlowLanguageParser';
 
 import { ComparatorEvaluator } from '../evaluator/ComparatorEvaluator';
@@ -64,6 +65,7 @@ import { PartialRatioEvaluator } from '../evaluator/string/PartialRatioEvaluator
 import { TokenSortRatioEvaluator } from '../evaluator/string/TokenSortRatioEvaluator';
 import { TokenSetRatioEvaluator } from '../evaluator/string/TokenSetRatioEvaluator';
 import { StringSimilarityScoreEvaluator } from '../evaluator/string/StringSimilarityScoreEvaluator';
+import { EvalInListEvaluator } from '../evaluator/EvalInListEvaluator';
 
 export type DataMap = Record<string, unknown>;
 export type ListsMap = Record<string, unknown[]>;
@@ -143,6 +145,8 @@ export class Visitor {
       return new TokenSetRatioEvaluator().evaluate(ctx, this);
     } else if (ctx instanceof StringSimilarityScoreContext) {
       return new StringSimilarityScoreEvaluator().evaluate(ctx, this);
+    } else if (ctx instanceof EvalInListContext) {
+      return new EvalInListEvaluator().evaluate(ctx, this);
     }
 
     throw new Error(`Operation not supported: ${ctx?.constructor?.name ?? typeof ctx}`);

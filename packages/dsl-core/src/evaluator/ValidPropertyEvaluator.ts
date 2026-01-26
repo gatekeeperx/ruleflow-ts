@@ -5,12 +5,12 @@ import { ValidPropertyContext } from '../generated/src/grammar/RuleFlowLanguageP
 export class ValidPropertyEvaluator {
   evaluate(ctx: ValidPropertyContext, visitor: Visitor): unknown {
     const fullText = (ctx.text || '').trim();
-    const ids = ctx.ID();
-    const isNested = ids.length > 1;
     const useRoot = fullText.startsWith('.');
+    const pathText = useRoot ? fullText.substring(1) : fullText;
+    const parts = pathText.split('.');
 
-    if (!isNested) {
-      const key = ids[0]?.text || '';
+    if (parts.length === 1) {
+      const key = parts[0];
       const value = (visitor.getData() as any)[key];
       if (value === undefined) {
         throw new PropertyNotFoundError(key);
@@ -19,9 +19,8 @@ export class ValidPropertyEvaluator {
     }
 
     // nested path
-    const path = ids.map((t) => t.text).join('.');
     let current: any = useRoot ? visitor.getRoot() : visitor.getData();
-    for (const part of path.split('.')) {
+    for (const part of parts) {
       if (current == null || typeof current !== 'object' || !(part in current)) {
         throw new PropertyNotFoundError(part);
       }

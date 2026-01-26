@@ -16,6 +16,7 @@ TypeScript interpreter for the Ruleflow DSL. It runs in isomorphic environments 
 - Regex utility: `regex_strip(prop, 're')`
 - Unary: `abs(expr)`
 - Geo: `geohash_encode`, `geohash_decode`, `distance`, `within_radius`
+- List evaluation: `evalInList('listName', predicate)` — evaluate a predicate against each element in a stored list
 - Actions: `action('name', { 'k': 'v' })` with params using properties (`{'id': user.id}`)
 - Evaluation mode: `evaluation_mode multi_match` (or default `single_match`)
 
@@ -109,6 +110,34 @@ within_radius(37.7749, -122.4194, 37.7750, -122.4195, 1) = true
 # with geohash
 distance(geohash_encode(37.7749, -122.4194, 7), geohash_encode(37.7750, -122.4195, 7)) < 0.5
 ```
+
+- evalInList (evaluate predicate against list elements):
+
+```sql
+# Basic: check if any element in 'blacklist' has field1 = 'test'
+evalInList('blacklist', elem.field1 = 'test')
+
+# Nested properties
+evalInList('blacklist', elem.field1.field2 = 'value')
+
+# Numeric comparison
+evalInList('items', elem.price > 100)
+
+# AND/OR conditions
+evalInList('blacklist', elem.field1 = 'test' AND elem.field2 = 'value')
+evalInList('blacklist', elem.field1 = 'test' OR elem.field1 = 'other')
+
+# Access parent context (user.id from data, elem.field1 from list element)
+evalInList('blacklist', elem.field1 = user.id)
+
+# Math operations
+evalInList('items', elem.quantity * elem.price > 1000)
+
+# With date functions
+evalInList('subscriptions', elem.email = user.email AND date(elem.endDate) >= date(now()))
+```
+
+The predicate is evaluated for each element in the stored list. Returns `true` if **any** element matches (semantics similar to `any{}`).
 
 - Multi-match mode:
 

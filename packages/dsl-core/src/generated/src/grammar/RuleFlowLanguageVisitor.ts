@@ -18,6 +18,7 @@ import { AggregationContext } from "./RuleFlowLanguageParser";
 import { DateOperationContext } from "./RuleFlowLanguageParser";
 import { RegexlikeContext } from "./RuleFlowLanguageParser";
 import { UnaryContext } from "./RuleFlowLanguageParser";
+import { EvalInListContext } from "./RuleFlowLanguageParser";
 import { BinaryAndContext } from "./RuleFlowLanguageParser";
 import { BinaryOrContext } from "./RuleFlowLanguageParser";
 import { DateParseExprContext } from "./RuleFlowLanguageParser";
@@ -194,6 +195,14 @@ export interface RuleFlowLanguageVisitor<Result> extends ParseTreeVisitor<Result
 	 * @return the visitor result
 	 */
 	visitUnary?: (ctx: UnaryContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `evalInList`
+	 * labeled alternative in `RuleFlowLanguageParser.expr`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitEvalInList?: (ctx: EvalInListContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `binaryAnd`

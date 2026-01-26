@@ -195,9 +195,117 @@ end`,
     lists: `{}`,
     expect: { type: 'result', value: 'ok' },
   },
+  {
+    id: 'evalInList_basic',
+    label: 'evalInList: match básico',
+    dsl: `workflow 'test'
+  ruleset 'dummy'
+    'blocked' evalInList('blacklist', elem.field1 = 'test') return 'block'
+  default 'allow'
+end`,
+    data: `{}`,
+    lists: `{"blacklist": [{"field1": "other"}, {"field1": "test"}, {"field1": "another"}]}`,
+    expect: { type: 'result', value: 'block' },
+  },
+  {
+    id: 'evalInList_no_match',
+    label: 'evalInList: sin match',
+    dsl: `workflow 'test'
+  ruleset 'dummy'
+    'blocked' evalInList('blacklist', elem.field1 = 'test') return 'block'
+  default 'allow'
+end`,
+    data: `{}`,
+    lists: `{"blacklist": [{"field1": "other"}, {"field1": "another"}]}`,
+    expect: { type: 'result', value: 'allow' },
+  },
+  {
+    id: 'evalInList_nested',
+    label: 'evalInList: propiedad anidada',
+    dsl: `workflow 'test'
+  ruleset 'dummy'
+    'blocked' evalInList('blacklist', elem.field1.field2 = 'value') return 'block'
+  default 'allow'
+end`,
+    data: `{}`,
+    lists: `{"blacklist": [{"field1": {"field2": "other"}}, {"field1": {"field2": "value"}}]}`,
+    expect: { type: 'result', value: 'block' },
+  },
+  {
+    id: 'evalInList_comparison',
+    label: 'evalInList: comparación numérica',
+    dsl: `workflow 'test'
+  ruleset 'dummy'
+    'high_value' evalInList('items', elem.price > 100) return 'block'
+  default 'allow'
+end`,
+    data: `{}`,
+    lists: `{"items": [{"price": 50}, {"price": 150}, {"price": 75}]}`,
+    expect: { type: 'result', value: 'block' },
+  },
+  {
+    id: 'evalInList_and',
+    label: 'evalInList: condición AND',
+    dsl: `workflow 'test'
+  ruleset 'dummy'
+    'blocked' evalInList('blacklist', elem.field1 = 'test' AND elem.field2 = 'value') return 'block'
+  default 'allow'
+end`,
+    data: `{}`,
+    lists: `{"blacklist": [{"field1": "test", "field2": "other"}, {"field1": "test", "field2": "value"}]}`,
+    expect: { type: 'result', value: 'block' },
+  },
+  {
+    id: 'evalInList_or',
+    label: 'evalInList: condición OR',
+    dsl: `workflow 'test'
+  ruleset 'dummy'
+    'blocked' evalInList('blacklist', elem.field1 = 'test' OR elem.field1 = 'other') return 'block'
+  default 'allow'
+end`,
+    data: `{}`,
+    lists: `{"blacklist": [{"field1": "different"}, {"field1": "test"}]}`,
+    expect: { type: 'result', value: 'block' },
+  },
+  {
+    id: 'evalInList_parent_context',
+    label: 'evalInList: acceso a contexto padre',
+    dsl: `workflow 'test'
+  ruleset 'dummy'
+    'blocked' evalInList('blacklist', elem.field1 = user.id) return 'block'
+  default 'allow'
+end`,
+    data: `{"user": {"id": "test123"}}`,
+    lists: `{"blacklist": [{"field1": "other"}, {"field1": "test123"}]}`,
+    expect: { type: 'result', value: 'block' },
+  },
+  {
+    id: 'evalInList_empty',
+    label: 'evalInList: lista vacía',
+    dsl: `workflow 'test'
+  ruleset 'dummy'
+    'blocked' evalInList('blacklist', elem.field1 = 'test') return 'block'
+  default 'allow'
+end`,
+    data: `{}`,
+    lists: `{"blacklist": []}`,
+    expect: { type: 'result', value: 'allow' },
+  },
+  {
+    id: 'evalInList_math',
+    label: 'evalInList: operación matemática',
+    dsl: `workflow 'test'
+  ruleset 'dummy'
+    'blocked' evalInList('items', elem.quantity * elem.price > 1000) return 'block'
+  default 'allow'
+end`,
+    data: `{}`,
+    lists: `{"items": [{"quantity": 5, "price": 100}, {"quantity": 10, "price": 150}]}`,
+    expect: { type: 'result', value: 'block' },
+  },
 ];
 
-type RunStatus = 'idle'|'running'|'pass'|'fail';
+type RunStatus = 'idle' | 'running' | 'pass' | 'fail';
 
 export default function HomePage() {
   const [dsl, setDsl] = useState(sampleDsl);
@@ -209,8 +317,8 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [statuses, setStatuses] = useState<Record<string, RunStatus>>(() => Object.fromEntries(cases.map(c => [c.id, 'idle'])) as Record<string, RunStatus>);
-  const [activeTab, setActiveTab] = useState<'response'|'matchedRules'|'warnings'>('response');
-  const [activeBodyTab, setActiveBodyTab] = useState<'dsl'|'data'|'lists'>('dsl');
+  const [activeTab, setActiveTab] = useState<'response' | 'matchedRules' | 'warnings'>('response');
+  const [activeBodyTab, setActiveBodyTab] = useState<'dsl' | 'data' | 'lists'>('dsl');
   const [url, setUrl] = useState<string>('/api/evaluate');
 
   // Cargar desde localStorage al iniciar
@@ -222,7 +330,7 @@ export default function HomePage() {
       if (lsDsl) setDsl(lsDsl);
       if (lsData) setData(lsData);
       if (lsLists) setLists(lsLists);
-    } catch {}
+    } catch { }
   }, []);
 
   // Persistir cambios en localStorage
@@ -231,7 +339,7 @@ export default function HomePage() {
       localStorage.setItem('rf_dsl', dsl);
       localStorage.setItem('rf_data', data);
       localStorage.setItem('rf_lists', lists);
-    } catch {}
+    } catch { }
   }, [dsl, data, lists]);
 
   function safeParseJson(label: string, text: string): { ok: true; value: any } | { ok: false; error: string } {
@@ -365,9 +473,9 @@ export default function HomePage() {
             <section>
               <div className="panel">
                 <div className="tabs">
-                  <button className={`tab ${activeBodyTab==='dsl' ? 'active' : ''}`} onClick={() => setActiveBodyTab('dsl')}>DSL</button>
-                  <button className={`tab ${activeBodyTab==='data' ? 'active' : ''}`} onClick={() => setActiveBodyTab('data')}>Data (JSON)</button>
-                  <button className={`tab ${activeBodyTab==='lists' ? 'active' : ''}`} onClick={() => setActiveBodyTab('lists')}>Lists (JSON)</button>
+                  <button className={`tab ${activeBodyTab === 'dsl' ? 'active' : ''}`} onClick={() => setActiveBodyTab('dsl')}>DSL</button>
+                  <button className={`tab ${activeBodyTab === 'data' ? 'active' : ''}`} onClick={() => setActiveBodyTab('data')}>Data (JSON)</button>
+                  <button className={`tab ${activeBodyTab === 'lists' ? 'active' : ''}`} onClick={() => setActiveBodyTab('lists')}>Lists (JSON)</button>
                 </div>
                 <div className="tab-panel">
                   {activeBodyTab === 'dsl' && (
@@ -407,9 +515,9 @@ export default function HomePage() {
             <section>
               <h2>Resultado</h2>
               <div className="tabs">
-                <button className={`tab ${activeTab==='response' ? 'active' : ''}`} onClick={() => setActiveTab('response')}>Response</button>
-                <button className={`tab ${activeTab==='matchedRules' ? 'active' : ''}`} onClick={() => setActiveTab('matchedRules')}>matchedRules</button>
-                <button className={`tab ${activeTab==='warnings' ? 'active' : ''}`} onClick={() => setActiveTab('warnings')}>warnings</button>
+                <button className={`tab ${activeTab === 'response' ? 'active' : ''}`} onClick={() => setActiveTab('response')}>Response</button>
+                <button className={`tab ${activeTab === 'matchedRules' ? 'active' : ''}`} onClick={() => setActiveTab('matchedRules')}>matchedRules</button>
+                <button className={`tab ${activeTab === 'warnings' ? 'active' : ''}`} onClick={() => setActiveTab('warnings')}>warnings</button>
               </div>
               <div className="tab-panel">
                 {activeTab === 'response' && (
