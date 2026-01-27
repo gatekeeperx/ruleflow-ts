@@ -7,8 +7,8 @@ describe('evalInList', () => {
   it('basic match', () => {
     const dsl = `workflow 'test'
   ruleset 'dummy'
-    'blocked' evalInList('blacklist', elem.field1 = 'test') return block
-  default allow
+    'blocked' evalInList('blacklist', elem.field1 = 'test' OR elem.field1 = 'other') return 'block'
+  default 'allow'
 end`;
     const res = run(dsl, {}, {
       blacklist: [
