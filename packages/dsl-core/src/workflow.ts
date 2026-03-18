@@ -4,7 +4,7 @@ import { RuleFlowLanguageParser } from './generated/src/grammar/RuleFlowLanguage
 import { BailErrorStrategy } from 'antlr4ts/BailErrorStrategy';
 import { PredictionMode } from 'antlr4ts/atn/PredictionMode';
 import { ErrorListener } from './listeners/ErrorListener';
-import type { InputMap, ListsMap, WorkflowResult } from './types';
+import type { InputMap, ListsMap, FunctionsMap, WorkflowResult } from './types';
 import { RulesetVisitor } from './visitors/RulesetVisitor';
 import type { ParseContext } from './generated/src/grammar/RuleFlowLanguageParser';
 import { AstSerializer } from './visitors/AstSerializer';
@@ -36,8 +36,8 @@ export class Workflow {
     this.tree = typeof (parser as any).parse === 'function' ? (parser as any).parse() : {};
   }
 
-  evaluate(request: InputMap, lists: ListsMap = {}): WorkflowResult {
-    const rs = new RulesetVisitor(request, lists);
+  evaluate(request: InputMap, lists: ListsMap = {}, functions: FunctionsMap = {}): WorkflowResult {
+    const rs = new RulesetVisitor(request, lists, functions);
     return rs.visit(this.tree as ParseContext);
   }
 
