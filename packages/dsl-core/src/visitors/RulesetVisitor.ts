@@ -1,13 +1,18 @@
 import type { ParseContext } from '../generated/src/grammar/RuleFlowLanguageParser';
-import type { InputMap, ListsMap, WorkflowResult } from '../types';
+import type { InputMap, ListsMap, FunctionsMap, WorkflowResult } from '../types';
 import { Visitor } from './Visitor';
 import { ActionsVisitorTs } from './ActionsVisitor';
 
 export class RulesetVisitor {
   private readonly eval: Visitor;
+  private readonly variables: Record<string, unknown> = {};
 
-  constructor(private readonly data: InputMap, private readonly lists: ListsMap = {}) {
-    this.eval = new Visitor(data, lists, data);
+  constructor(
+    private readonly data: InputMap,
+    private readonly lists: ListsMap = {},
+    private readonly functions: FunctionsMap = {}
+  ) {
+    this.eval = new Visitor(data, lists, data, functions, this.variables);
   }
 
   visit(root: ParseContext): WorkflowResult {
@@ -51,6 +56,18 @@ export class RulesetVisitor {
 
         if (passed) {
           try {
+            // Execute SET clauses
+            for (const setClause of ruleBody.set_clause()) {
+              const value = this.eval.visit(setClause.expr());
+              const rawName = setClause._variable.text as string;
+              this.variables[rawName.substring(1)] = value; // strip '$'
+            }
+
+            // Handle CONTINUE: variables are set, move to next rule/ruleset
+            if (ruleBody.K_CONTINUE?.()) {
+              continue;
+            }
+
             const result = this.resolveRuleResult(ruleBody);
             const actions = this.collectActions(ruleBody, warnings);
 
@@ -69,6 +86,7 @@ export class RulesetVisitor {
                 result,
                 warnings,
                 actions,
+                variables: { ...this.variables },
                 error: false,
               };
             }
@@ -90,6 +108,7 @@ export class RulesetVisitor {
         actions: first.actions,
         matchedRules,
         warnings,
+        variables: { ...this.variables },
         error: false,
       };
     }
@@ -111,6 +130,7 @@ export class RulesetVisitor {
       warnings,
       actions: defActions,
       matchedRules: multiMatch ? [] : undefined,
+      variables: { ...this.variables },
       error: false,
     };
   }

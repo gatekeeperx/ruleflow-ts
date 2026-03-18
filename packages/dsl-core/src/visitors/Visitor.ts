@@ -31,7 +31,11 @@ import {
   TokenSortRatioContext,
   TokenSetRatioContext,
   StringSimilarityScoreContext,
+  VariableRefContext,
+  MemberAccessContext,
+  CustomFunctionCallContext,
 } from '../generated/src/grammar/RuleFlowLanguageParser';
+import type { FunctionsMap } from '../types';
 
 import { ComparatorEvaluator } from '../evaluator/ComparatorEvaluator';
 import { MathMulEvaluator } from '../evaluator/MathMulEvaluator';
@@ -64,21 +68,34 @@ import { PartialRatioEvaluator } from '../evaluator/string/PartialRatioEvaluator
 import { TokenSortRatioEvaluator } from '../evaluator/string/TokenSortRatioEvaluator';
 import { TokenSetRatioEvaluator } from '../evaluator/string/TokenSetRatioEvaluator';
 import { StringSimilarityScoreEvaluator } from '../evaluator/string/StringSimilarityScoreEvaluator';
+import { VariableRefEvaluator } from '../evaluator/VariableRefEvaluator';
+import { MemberAccessEvaluator } from '../evaluator/MemberAccessEvaluator';
+import { CustomFunctionCallEvaluator } from '../evaluator/CustomFunctionCallEvaluator';
 
 export type DataMap = Record<string, unknown>;
 export type ListsMap = Record<string, unknown[]>;
 
 export class Visitor {
+  private readonly functionCallCache: Map<string, unknown> = new Map();
+
   constructor(
     private readonly data: DataMap,
     private readonly lists: ListsMap = {},
-    private readonly root: DataMap = data
+    private readonly root: DataMap = data,
+    private readonly functions: FunctionsMap = {},
+    private readonly variables: Record<string, unknown> = {}
   ) { }
 
   visit(tree: any): any {
     const ctx = tree as any;
 
-    if (ctx instanceof ComparatorContext) {
+    if (ctx instanceof VariableRefContext) {
+      return new VariableRefEvaluator().evaluate(ctx, this);
+    } else if (ctx instanceof MemberAccessContext) {
+      return new MemberAccessEvaluator().evaluate(ctx, this);
+    } else if (ctx instanceof CustomFunctionCallContext) {
+      return new CustomFunctionCallEvaluator().evaluate(ctx, this);
+    } else if (ctx instanceof ComparatorContext) {
       return new ComparatorEvaluator().evaluate(ctx, this);
     } else if (ctx instanceof MathMulContext) {
       return new MathMulEvaluator().evaluate(ctx, this);
@@ -158,5 +175,17 @@ export class Visitor {
 
   getRoot() {
     return this.root;
+  }
+
+  getFunctions() {
+    return this.functions;
+  }
+
+  getVariables() {
+    return this.variables;
+  }
+
+  getFunctionCallCache() {
+    return this.functionCallCache;
   }
 }

@@ -9,6 +9,8 @@ import { NowContext } from "./RuleFlowLanguageParser";
 import { DateAddContext } from "./RuleFlowLanguageParser";
 import { DateSubtractContext } from "./RuleFlowLanguageParser";
 import { ParenthesisContext } from "./RuleFlowLanguageParser";
+import { VariableRefContext } from "./RuleFlowLanguageParser";
+import { MemberAccessContext } from "./RuleFlowLanguageParser";
 import { MathMulContext } from "./RuleFlowLanguageParser";
 import { MathAddContext } from "./RuleFlowLanguageParser";
 import { ComparatorContext } from "./RuleFlowLanguageParser";
@@ -18,6 +20,7 @@ import { AggregationContext } from "./RuleFlowLanguageParser";
 import { DateOperationContext } from "./RuleFlowLanguageParser";
 import { RegexlikeContext } from "./RuleFlowLanguageParser";
 import { UnaryContext } from "./RuleFlowLanguageParser";
+import { CustomFunctionCallContext } from "./RuleFlowLanguageParser";
 import { BinaryAndContext } from "./RuleFlowLanguageParser";
 import { BinaryOrContext } from "./RuleFlowLanguageParser";
 import { DateParseExprContext } from "./RuleFlowLanguageParser";
@@ -43,6 +46,7 @@ import { RulesetsContext } from "./RuleFlowLanguageParser";
 import { Ruleset_conditionContext } from "./RuleFlowLanguageParser";
 import { RulesContext } from "./RuleFlowLanguageParser";
 import { Rule_bodyContext } from "./RuleFlowLanguageParser";
+import { Set_clauseContext } from "./RuleFlowLanguageParser";
 import { NameContext } from "./RuleFlowLanguageParser";
 import { Default_clauseContext } from "./RuleFlowLanguageParser";
 import { ConfigurationContext } from "./RuleFlowLanguageParser";
@@ -124,6 +128,22 @@ export interface RuleFlowLanguageVisitor<Result> extends ParseTreeVisitor<Result
 	visitParenthesis?: (ctx: ParenthesisContext) => Result;
 
 	/**
+	 * Visit a parse tree produced by the `variableRef`
+	 * labeled alternative in `RuleFlowLanguageParser.expr`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitVariableRef?: (ctx: VariableRefContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `memberAccess`
+	 * labeled alternative in `RuleFlowLanguageParser.expr`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitMemberAccess?: (ctx: MemberAccessContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by the `mathMul`
 	 * labeled alternative in `RuleFlowLanguageParser.expr`.
 	 * @param ctx the parse tree
@@ -194,6 +214,14 @@ export interface RuleFlowLanguageVisitor<Result> extends ParseTreeVisitor<Result
 	 * @return the visitor result
 	 */
 	visitUnary?: (ctx: UnaryContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `customFunctionCall`
+	 * labeled alternative in `RuleFlowLanguageParser.expr`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitCustomFunctionCall?: (ctx: CustomFunctionCallContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `binaryAnd`
@@ -385,6 +413,13 @@ export interface RuleFlowLanguageVisitor<Result> extends ParseTreeVisitor<Result
 	 * @return the visitor result
 	 */
 	visitRule_body?: (ctx: Rule_bodyContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `RuleFlowLanguageParser.set_clause`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitSet_clause?: (ctx: Set_clauseContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `RuleFlowLanguageParser.name`.

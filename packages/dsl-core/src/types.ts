@@ -1,5 +1,7 @@
 export type InputMap = Record<string, unknown>;
 export type ListsMap = Record<string, unknown[]>;
+export type RuleflowFunction = (args: unknown[]) => unknown;
+export type FunctionsMap = Record<string, RuleflowFunction>;
 
 export interface Action {
   name: string;
@@ -22,4 +24,5 @@ export interface WorkflowResult {
   warnings?: string[];
   error?: boolean;
   matchedRules?: MatchedRule[];
+  variables?: Record<string, unknown>;
 }
