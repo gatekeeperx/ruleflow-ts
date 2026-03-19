@@ -14,11 +14,18 @@ export class AggregationEvaluator {
 
         switch (op) {
             case RuleFlowLanguageParser.K_ALL:
-                return listVal.every((item) => Boolean(this.evalPredicate(item, visitor, pred)));
+                return listVal.every((item) => {
+                    try { return Boolean(this.evalPredicate(item, visitor, pred)); } catch { return false; }
+                });
+            case RuleFlowLanguageParser.K_CONTAINS:
             case RuleFlowLanguageParser.K_ANY:
-                return listVal.some((item) => Boolean(this.evalPredicate(item, visitor, pred)));
+                return listVal.some((item) => {
+                    try { return Boolean(this.evalPredicate(item, visitor, pred)); } catch { return false; }
+                });
             case RuleFlowLanguageParser.K_NONE:
-                return !listVal.some((item) => Boolean(this.evalPredicate(item, visitor, pred)));
+                return !listVal.some((item) => {
+                    try { return Boolean(this.evalPredicate(item, visitor, pred)); } catch { return false; }
+                });
             case RuleFlowLanguageParser.K_COUNT: {
                 if (!pred) return listVal.length;
                 const count = listVal.filter((item) => Boolean(this.evalPredicate(item, visitor, pred))).length;
@@ -52,7 +59,9 @@ export class AggregationEvaluator {
         }
 
         const data = (item && typeof item === 'object') ? item : { value: item };
-        return new (visitor.constructor as any)(data, visitor.getLists(), visitor.getRoot()).visit(pred);
+        // Inject 'it' so `it.field` expressions resolve to the current item
+        const predicateData = { ...data, it: item };
+        return new (visitor.constructor as any)(predicateData, visitor.getLists(), visitor.getRoot()).visit(pred);
     }
 
     private compareValues(a: any, b: any): boolean {

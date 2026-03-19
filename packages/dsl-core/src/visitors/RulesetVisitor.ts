@@ -29,6 +29,7 @@ export class RulesetVisitor {
     const multiMatch = !!(evalMode && evalMode.K_MULTI_MATCH?.());
 
     const matchedRules: Array<{ ruleSet: string; rule: string; result: string; actions: any[] }> = [];
+    const accumulatedActions: any[] = [];
 
     for (const ruleset of ctx.rulesets()) {
       if (ruleset.ruleset_condition()) {
@@ -60,7 +61,30 @@ export class RulesetVisitor {
             for (const setClause of ruleBody.set_clause()) {
               const value = this.eval.visit(setClause.expr());
               const rawName = setClause._variable.text as string;
-              this.variables[rawName.substring(1)] = value; // strip '$'
+              const varName = rawName.substring(1); // strip '$'
+              const compoundOp = (setClause as any)._compound_op;
+              if (compoundOp) {
+                const existing = this.variables[varName];
+                const existingVal = existing != null ? Number(existing) : 0;
+                const rhs = Number(value);
+                switch (compoundOp.text) {
+                  case '+=': this.variables[varName] = existingVal + rhs; break;
+                  case '-=': this.variables[varName] = existingVal - rhs; break;
+                  case '*=': this.variables[varName] = existingVal * rhs; break;
+                  case '/=': this.variables[varName] = existingVal / rhs; break;
+                  case '%=': this.variables[varName] = existingVal % rhs; break;
+                  default:   this.variables[varName] = rhs;
+                }
+              } else {
+                this.variables[varName] = value;
+              }
+            }
+
+            // Inline actions + CONTINUE (no THEN)
+            if ((ruleBody as any)._inline_actions) {
+              const inlineActions = this.collectInlineActions(ruleBody, warnings);
+              accumulatedActions.push(...inlineActions);
+              continue;
             }
 
             // Handle CONTINUE: variables are set, move to next rule/ruleset
@@ -69,7 +93,8 @@ export class RulesetVisitor {
             }
 
             const result = this.resolveRuleResult(ruleBody);
-            const actions = this.collectActions(ruleBody, warnings);
+            const ruleActions = this.collectActions(ruleBody, warnings);
+            const actions = [...accumulatedActions, ...ruleActions];
 
             if (multiMatch) {
               matchedRules.push({
@@ -120,7 +145,7 @@ export class RulesetVisitor {
     } catch (e: any) {
       warnings.push(this.formatWarning('Default return', e));
     }
-    const defActions = this.collectDefaultActions(def, warnings);
+    const defActions = [...accumulatedActions, ...this.collectDefaultActions(def, warnings)];
 
     return {
       workflow: workflowName,
@@ -187,6 +212,16 @@ export class RulesetVisitor {
       return [];
     }
     }
+
+  private collectInlineActions(ruleBody: any, warnings: string[]): any[] {
+    try {
+      const actionsCtx = (ruleBody as any)._inline_actions;
+      return new ActionsVisitorTs(this.eval).visit(actionsCtx);
+    } catch (e: any) {
+      warnings.push(this.formatWarning('Inline actions', e));
+      return [];
+    }
+  }
 
   private collectDefaultActions(def: any, warnings: string[]): any[] {
     try {
