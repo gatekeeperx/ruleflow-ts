@@ -1,6 +1,6 @@
 {
   "name": "@ruleflow-ts/dsl-core",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Ruleflow DSL interpreter in TypeScript (isomorphic, SSR+Edge compatible).",
   "type": "commonjs",
   "sideEffects": false,

@@ -9,7 +9,7 @@ export class CustomFunctionCallEvaluator {
       throw new Error(`Custom function '${functionName}' is not defined`);
     }
 
-    const args: unknown[] = (ctx.expr() as any[]).map((e: any) => visitor.visit(e));
+    const args: unknown[] = (ctx.funcCallArg() as any[]).map((arg: any) => visitor.visit(arg._argValue));
 
     const cacheKey = JSON.stringify([functionName, ...args]);
     const cache = visitor.getFunctionCallCache();

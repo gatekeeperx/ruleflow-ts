@@ -14,12 +14,14 @@ import { MemberAccessContext } from "./RuleFlowLanguageParser";
 import { MathMulContext } from "./RuleFlowLanguageParser";
 import { MathAddContext } from "./RuleFlowLanguageParser";
 import { ComparatorContext } from "./RuleFlowLanguageParser";
+import { StoredListExprContext } from "./RuleFlowLanguageParser";
 import { ListContext } from "./RuleFlowLanguageParser";
 import { TupleListContext } from "./RuleFlowLanguageParser";
 import { AggregationContext } from "./RuleFlowLanguageParser";
 import { DateOperationContext } from "./RuleFlowLanguageParser";
 import { RegexlikeContext } from "./RuleFlowLanguageParser";
 import { UnaryContext } from "./RuleFlowLanguageParser";
+import { EvalInListContext } from "./RuleFlowLanguageParser";
 import { CustomFunctionCallContext } from "./RuleFlowLanguageParser";
 import { BinaryAndContext } from "./RuleFlowLanguageParser";
 import { BinaryOrContext } from "./RuleFlowLanguageParser";
@@ -58,6 +60,7 @@ import { ActionContext } from "./RuleFlowLanguageParser";
 import { Action_paramsContext } from "./RuleFlowLanguageParser";
 import { Param_pairsContext } from "./RuleFlowLanguageParser";
 import { Param_pairContext } from "./RuleFlowLanguageParser";
+import { FuncCallArgContext } from "./RuleFlowLanguageParser";
 import { ExprContext } from "./RuleFlowLanguageParser";
 import { GeoExprContext } from "./RuleFlowLanguageParser";
 import { DateExprContext } from "./RuleFlowLanguageParser";
@@ -168,6 +171,14 @@ export interface RuleFlowLanguageVisitor<Result> extends ParseTreeVisitor<Result
 	visitComparator?: (ctx: ComparatorContext) => Result;
 
 	/**
+	 * Visit a parse tree produced by the `storedListExpr`
+	 * labeled alternative in `RuleFlowLanguageParser.expr`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitStoredListExpr?: (ctx: StoredListExprContext) => Result;
+
+	/**
 	 * Visit a parse tree produced by the `list`
 	 * labeled alternative in `RuleFlowLanguageParser.expr`.
 	 * @param ctx the parse tree
@@ -214,6 +225,14 @@ export interface RuleFlowLanguageVisitor<Result> extends ParseTreeVisitor<Result
 	 * @return the visitor result
 	 */
 	visitUnary?: (ctx: UnaryContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `evalInList`
+	 * labeled alternative in `RuleFlowLanguageParser.expr`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitEvalInList?: (ctx: EvalInListContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `customFunctionCall`
@@ -497,6 +516,13 @@ export interface RuleFlowLanguageVisitor<Result> extends ParseTreeVisitor<Result
 	 * @return the visitor result
 	 */
 	visitParam_pair?: (ctx: Param_pairContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `RuleFlowLanguageParser.funcCallArg`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitFuncCallArg?: (ctx: FuncCallArgContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `RuleFlowLanguageParser.expr`.

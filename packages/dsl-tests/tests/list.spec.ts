@@ -43,4 +43,48 @@ end`;
     const res = run(dsl, { user: { name: 'john', role: 'admin' } });
     expect(res.result).toBe('ok');
   });
+
+  it('storedListExpr with any — item matches predicate', () => {
+    const dsl = `workflow 'w'
+  ruleset 'rs'
+    'r1' list('users').any { it.role = 'admin' } return 'ok'
+  default 'ko'
+end`;
+    const lists = { users: [{ role: 'user' }, { role: 'admin' }] };
+    const res = run(dsl, {}, lists);
+    expect(res.result).toBe('ok');
+  });
+
+  it('storedListExpr with none — no item matches predicate', () => {
+    const dsl = `workflow 'w'
+  ruleset 'rs'
+    'r1' list('users').none { it.role = 'superadmin' } return 'ok'
+  default 'ko'
+end`;
+    const lists = { users: [{ role: 'user' }, { role: 'admin' }] };
+    const res = run(dsl, {}, lists);
+    expect(res.result).toBe('ok');
+  });
+
+  it('storedListExpr with count predicate', () => {
+    const dsl = `workflow 'w'
+  ruleset 'rs'
+    'r1' list('txns').count { it.amount > 100 } > 2 return 'ok'
+  default 'ko'
+end`;
+    const lists = { txns: [{ amount: 50 }, { amount: 200 }, { amount: 150 }, { amount: 300 }] };
+    const res = run(dsl, {}, lists);
+    expect(res.result).toBe('ok');
+  });
+
+  it('storedListExpr with count() — count all items', () => {
+    const dsl = `workflow 'w'
+  ruleset 'rs'
+    'r1' list('items').count() = 3 return 'ok'
+  default 'ko'
+end`;
+    const lists = { items: ['a', 'b', 'c'] };
+    const res = run(dsl, {}, lists);
+    expect(res.result).toBe('ok');
+  });
 });

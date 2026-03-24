@@ -14,12 +14,14 @@ import { MemberAccessContext } from "./RuleFlowLanguageParser";
 import { MathMulContext } from "./RuleFlowLanguageParser";
 import { MathAddContext } from "./RuleFlowLanguageParser";
 import { ComparatorContext } from "./RuleFlowLanguageParser";
+import { StoredListExprContext } from "./RuleFlowLanguageParser";
 import { ListContext } from "./RuleFlowLanguageParser";
 import { TupleListContext } from "./RuleFlowLanguageParser";
 import { AggregationContext } from "./RuleFlowLanguageParser";
 import { DateOperationContext } from "./RuleFlowLanguageParser";
 import { RegexlikeContext } from "./RuleFlowLanguageParser";
 import { UnaryContext } from "./RuleFlowLanguageParser";
+import { EvalInListContext } from "./RuleFlowLanguageParser";
 import { CustomFunctionCallContext } from "./RuleFlowLanguageParser";
 import { BinaryAndContext } from "./RuleFlowLanguageParser";
 import { BinaryOrContext } from "./RuleFlowLanguageParser";
@@ -58,6 +60,7 @@ import { ActionContext } from "./RuleFlowLanguageParser";
 import { Action_paramsContext } from "./RuleFlowLanguageParser";
 import { Param_pairsContext } from "./RuleFlowLanguageParser";
 import { Param_pairContext } from "./RuleFlowLanguageParser";
+import { FuncCallArgContext } from "./RuleFlowLanguageParser";
 import { ExprContext } from "./RuleFlowLanguageParser";
 import { GeoExprContext } from "./RuleFlowLanguageParser";
 import { DateExprContext } from "./RuleFlowLanguageParser";
@@ -220,6 +223,19 @@ export interface RuleFlowLanguageListener extends ParseTreeListener {
 	exitComparator?: (ctx: ComparatorContext) => void;
 
 	/**
+	 * Enter a parse tree produced by the `storedListExpr`
+	 * labeled alternative in `RuleFlowLanguageParser.expr`.
+	 * @param ctx the parse tree
+	 */
+	enterStoredListExpr?: (ctx: StoredListExprContext) => void;
+	/**
+	 * Exit a parse tree produced by the `storedListExpr`
+	 * labeled alternative in `RuleFlowLanguageParser.expr`.
+	 * @param ctx the parse tree
+	 */
+	exitStoredListExpr?: (ctx: StoredListExprContext) => void;
+
+	/**
 	 * Enter a parse tree produced by the `list`
 	 * labeled alternative in `RuleFlowLanguageParser.expr`.
 	 * @param ctx the parse tree
@@ -296,6 +312,19 @@ export interface RuleFlowLanguageListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitUnary?: (ctx: UnaryContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `evalInList`
+	 * labeled alternative in `RuleFlowLanguageParser.expr`.
+	 * @param ctx the parse tree
+	 */
+	enterEvalInList?: (ctx: EvalInListContext) => void;
+	/**
+	 * Exit a parse tree produced by the `evalInList`
+	 * labeled alternative in `RuleFlowLanguageParser.expr`.
+	 * @param ctx the parse tree
+	 */
+	exitEvalInList?: (ctx: EvalInListContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `customFunctionCall`
@@ -748,6 +777,17 @@ export interface RuleFlowLanguageListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitParam_pair?: (ctx: Param_pairContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `RuleFlowLanguageParser.funcCallArg`.
+	 * @param ctx the parse tree
+	 */
+	enterFuncCallArg?: (ctx: FuncCallArgContext) => void;
+	/**
+	 * Exit a parse tree produced by `RuleFlowLanguageParser.funcCallArg`.
+	 * @param ctx the parse tree
+	 */
+	exitFuncCallArg?: (ctx: FuncCallArgContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `RuleFlowLanguageParser.expr`.

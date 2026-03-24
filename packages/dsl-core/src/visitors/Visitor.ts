@@ -34,6 +34,8 @@ import {
   VariableRefContext,
   MemberAccessContext,
   CustomFunctionCallContext,
+  StoredListExprContext,
+  EvalInListContext,
 } from '../generated/src/grammar/RuleFlowLanguageParser';
 import type { FunctionsMap } from '../types';
 
@@ -71,6 +73,8 @@ import { StringSimilarityScoreEvaluator } from '../evaluator/string/StringSimila
 import { VariableRefEvaluator } from '../evaluator/VariableRefEvaluator';
 import { MemberAccessEvaluator } from '../evaluator/MemberAccessEvaluator';
 import { CustomFunctionCallEvaluator } from '../evaluator/CustomFunctionCallEvaluator';
+import { StoredListExprEvaluator } from '../evaluator/StoredListExprEvaluator';
+import { EvalInListEvaluator } from '../evaluator/EvalInListEvaluator';
 
 export type DataMap = Record<string, unknown>;
 export type ListsMap = Record<string, unknown[]>;
@@ -89,7 +93,11 @@ export class Visitor {
   visit(tree: any): any {
     const ctx = tree as any;
 
-    if (ctx instanceof VariableRefContext) {
+    if (ctx instanceof StoredListExprContext) {
+      return new StoredListExprEvaluator().evaluate(ctx, this);
+    } else if (ctx instanceof EvalInListContext) {
+      return new EvalInListEvaluator().evaluate(ctx, this);
+    } else if (ctx instanceof VariableRefContext) {
       return new VariableRefEvaluator().evaluate(ctx, this);
     } else if (ctx instanceof MemberAccessContext) {
       return new MemberAccessEvaluator().evaluate(ctx, this);
