@@ -6,6 +6,7 @@ export type {
   AstWorkflow,
   AstRuleset,
   AstRule,
+  AstSetClause,
   AstAction,
   AstActionParam,
   AstReturn,
