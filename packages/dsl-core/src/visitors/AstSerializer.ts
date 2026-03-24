@@ -16,12 +16,21 @@ export interface AstRuleset {
   rules: AstRule[];
 }
 
+export interface AstSetClause {
+  variable: string;
+  operator: string;
+  expression: string;
+}
+
 export interface AstRule {
   type: 'Rule';
   name: string;
   predicate: { kind: 'expr'; text: string };
   result: AstReturn;
   actions: AstAction[];
+  setClauses?: AstSetClause[];
+  continue?: boolean;
+  inlineActions?: AstAction[];
 }
 
 export interface AstAction {
@@ -159,17 +168,46 @@ export class AstSerializer {
     const body = ctx.rule_body();
 
     const predicateText = this.textOf(body.expr());
-    const retCtx = body.return_result?.();
-    const result = this.serializeReturn(retCtx) || { kind: 'state', value: 'allow' };
-    const actions = this.serializeActions(body.actions?.());
 
-    return {
+    const setClauses: AstSetClause[] = [];
+    for (const sc of body.set_clause?.() ?? []) {
+      const rawVar = sc._variable?.text ?? '';
+      const varName = rawVar.startsWith('$') ? rawVar.substring(1) : rawVar;
+      const compoundOp = (sc as any)._compound_op;
+      const operator = compoundOp ? String(compoundOp.text) : '=';
+      const expression = this.textOf(sc.expr());
+      setClauses.push({ variable: varName, operator, expression });
+    }
+
+    const hasContinue = !!(body.K_CONTINUE?.());
+    const inlineActionsCtx = (body as any)._inline_actions;
+
+    const retCtx = body.return_result?.();
+    const result = hasContinue && !retCtx
+      ? { kind: 'state' as const, value: '' }
+      : (this.serializeReturn(retCtx) || { kind: 'state' as const, value: 'allow' });
+
+    const actions = inlineActionsCtx
+      ? []
+      : this.serializeActions(body.actions?.());
+
+    const inlineActions = inlineActionsCtx
+      ? this.serializeActions(inlineActionsCtx)
+      : undefined;
+
+    const rule: AstRule = {
       type: 'Rule',
       name,
       predicate: { kind: 'expr' as const, text: predicateText },
       result,
       actions,
     };
+
+    if (setClauses.length > 0) rule.setClauses = setClauses;
+    if (hasContinue) rule.continue = true;
+    if (inlineActions && inlineActions.length > 0) rule.inlineActions = inlineActions;
+
+    return rule;
   }
 
   private serializeReturn(ret: any | undefined): AstReturn {
