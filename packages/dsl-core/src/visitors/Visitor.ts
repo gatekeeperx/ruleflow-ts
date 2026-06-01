@@ -18,6 +18,7 @@ import {
   NowContext,
   DateAddContext,
   DateSubtractContext,
+  DateComponentContext,
   DateParseExprContext,
   AggregationContext,
   GeoOperationContext,
@@ -54,6 +55,7 @@ import { DayOfWeekEvaluator } from '../evaluator/date/DayOfWeekEvaluator';
 import { NowEvaluator } from '../evaluator/date/NowEvaluator';
 import { DateAddEvaluator } from '../evaluator/date/DateAddEvaluator';
 import { DateSubtractEvaluator } from '../evaluator/date/DateSubtractEvaluator';
+import { DateComponentEvaluator } from '../evaluator/date/DateComponentEvaluator';
 import { DateOperationEvaluator } from '../evaluator/date/DateOperationEvaluator';
 import { DateParseExprEvaluator } from '../evaluator/date/DateParseExprEvaluator';
 import { GeoOperationEvaluator } from '../evaluator/geo/GeoOperationEvaluator';
@@ -134,6 +136,8 @@ export class Visitor {
       return new DateAddEvaluator().evaluate(ctx, this);
     } else if (ctx instanceof DateSubtractContext) {
       return new DateSubtractEvaluator().evaluate(ctx, this);
+    } else if (ctx instanceof DateComponentContext) {
+      return new DateComponentEvaluator().evaluate(ctx, this);
     } else if (ctx instanceof DateParseExprContext) {
       return new DateParseExprEvaluator().evaluate(ctx, this);
     } else if (ctx instanceof AggregationContext) {
