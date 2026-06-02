@@ -8,6 +8,7 @@ import { DayOfWeekContext } from "./RuleFlowLanguageParser";
 import { NowContext } from "./RuleFlowLanguageParser";
 import { DateAddContext } from "./RuleFlowLanguageParser";
 import { DateSubtractContext } from "./RuleFlowLanguageParser";
+import { DateComponentContext } from "./RuleFlowLanguageParser";
 import { ParenthesisContext } from "./RuleFlowLanguageParser";
 import { VariableRefContext } from "./RuleFlowLanguageParser";
 import { MemberAccessContext } from "./RuleFlowLanguageParser";
@@ -118,6 +119,14 @@ export interface RuleFlowLanguageVisitor<Result> extends ParseTreeVisitor<Result
 	 * @return the visitor result
 	 */
 	visitDateSubtract?: (ctx: DateSubtractContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `dateComponent`
+	 * labeled alternative in `RuleFlowLanguageParser.dateExpr`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitDateComponent?: (ctx: DateComponentContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `parenthesis`

@@ -61,3 +61,32 @@ end`;
     expect(run(dateNow).result).toBe('ok');
   });
 });
+
+describe('Date component extraction', () => {
+  const component = (expr: string) => `workflow 'w'
+  ruleset 'rs'
+    'r1' ${expr} return 'ok'
+  default 'ko'
+end`;
+
+  it('year/month/day/hour/minute from a datetime literal', () => {
+    expect(run(component("year('2024-06-01T12:30Z') = 2024")).result).toBe('ok');
+    expect(run(component("month('2024-06-01T12:30Z') = 6")).result).toBe('ok');
+    expect(run(component("day('2024-06-01T12:30Z') = 1")).result).toBe('ok');
+    expect(run(component("hour('2024-06-01T12:30Z') = 12")).result).toBe('ok');
+    expect(run(component("minute('2024-06-01T12:30Z') = 30")).result).toBe('ok');
+  });
+
+  it('extracts a component from a property', () => {
+    const dsl = component('year(order_date) = 2024');
+    expect(run(dsl, { order_date: '2024-06-01T12:30Z' }).result).toBe('ok');
+  });
+
+  it('date-only string defaults to midnight (hour = 0)', () => {
+    expect(run(component("hour('2020-03-01') = 0")).result).toBe('ok');
+  });
+
+  it('invalid date string does not match', () => {
+    expect(run(component("hour('not-a-date') = 0")).result).toBe('ko');
+  });
+});

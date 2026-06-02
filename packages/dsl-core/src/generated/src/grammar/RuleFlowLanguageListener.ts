@@ -8,6 +8,7 @@ import { DayOfWeekContext } from "./RuleFlowLanguageParser";
 import { NowContext } from "./RuleFlowLanguageParser";
 import { DateAddContext } from "./RuleFlowLanguageParser";
 import { DateSubtractContext } from "./RuleFlowLanguageParser";
+import { DateComponentContext } from "./RuleFlowLanguageParser";
 import { ParenthesisContext } from "./RuleFlowLanguageParser";
 import { VariableRefContext } from "./RuleFlowLanguageParser";
 import { MemberAccessContext } from "./RuleFlowLanguageParser";
@@ -140,6 +141,19 @@ export interface RuleFlowLanguageListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitDateSubtract?: (ctx: DateSubtractContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `dateComponent`
+	 * labeled alternative in `RuleFlowLanguageParser.dateExpr`.
+	 * @param ctx the parse tree
+	 */
+	enterDateComponent?: (ctx: DateComponentContext) => void;
+	/**
+	 * Exit a parse tree produced by the `dateComponent`
+	 * labeled alternative in `RuleFlowLanguageParser.dateExpr`.
+	 * @param ctx the parse tree
+	 */
+	exitDateComponent?: (ctx: DateComponentContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `parenthesis`
