@@ -15,6 +15,7 @@ import { MemberAccessContext } from "./RuleFlowLanguageParser";
 import { MathMulContext } from "./RuleFlowLanguageParser";
 import { MathAddContext } from "./RuleFlowLanguageParser";
 import { ComparatorContext } from "./RuleFlowLanguageParser";
+import { NullCheckContext } from "./RuleFlowLanguageParser";
 import { ListContext } from "./RuleFlowLanguageParser";
 import { TupleListContext } from "./RuleFlowLanguageParser";
 import { AggregationContext } from "./RuleFlowLanguageParser";
@@ -175,6 +176,14 @@ export interface RuleFlowLanguageVisitor<Result> extends ParseTreeVisitor<Result
 	 * @return the visitor result
 	 */
 	visitComparator?: (ctx: ComparatorContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `nullCheck`
+	 * labeled alternative in `RuleFlowLanguageParser.expr`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitNullCheck?: (ctx: NullCheckContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `list`
