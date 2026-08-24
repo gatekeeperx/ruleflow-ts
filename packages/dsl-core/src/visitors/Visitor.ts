@@ -35,6 +35,7 @@ import {
   VariableRefContext,
   MemberAccessContext,
   CustomFunctionCallContext,
+  NullCheckContext,
 } from '../generated/src/grammar/RuleFlowLanguageParser';
 import type { FunctionsMap } from '../types';
 
@@ -73,6 +74,7 @@ import { StringSimilarityScoreEvaluator } from '../evaluator/string/StringSimila
 import { VariableRefEvaluator } from '../evaluator/VariableRefEvaluator';
 import { MemberAccessEvaluator } from '../evaluator/MemberAccessEvaluator';
 import { CustomFunctionCallEvaluator } from '../evaluator/CustomFunctionCallEvaluator';
+import { NullCheckEvaluator } from '../evaluator/NullCheckEvaluator';
 
 export type DataMap = Record<string, unknown>;
 export type ListsMap = Record<string, unknown[]>;
@@ -97,6 +99,8 @@ export class Visitor {
       return new MemberAccessEvaluator().evaluate(ctx, this);
     } else if (ctx instanceof CustomFunctionCallContext) {
       return new CustomFunctionCallEvaluator().evaluate(ctx, this);
+    } else if (ctx instanceof NullCheckContext) {
+      return new NullCheckEvaluator().evaluate(ctx, this);
     } else if (ctx instanceof ComparatorContext) {
       return new ComparatorEvaluator().evaluate(ctx, this);
     } else if (ctx instanceof MathMulContext) {
