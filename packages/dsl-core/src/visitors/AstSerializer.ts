@@ -180,7 +180,10 @@ export class AstSerializer {
     }
 
     const hasContinue = !!(body.K_CONTINUE?.());
-    const inlineActionsCtx = (body as any)._inline_actions;
+    // `THEN actions CONTINUE` behaves like `actions CONTINUE` (accumulate and keep going),
+    // so it is serialized as inline actions and code generation round-trips it.
+    const thenContinue = hasContinue && !!body.K_THEN?.();
+    const inlineActionsCtx = (body as any)._inline_actions ?? (thenContinue ? body.actions?.() : undefined);
 
     const retCtx = body.return_result?.();
     const result = hasContinue && !retCtx

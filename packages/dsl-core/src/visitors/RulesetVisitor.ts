@@ -49,7 +49,8 @@ export class RulesetVisitor {
 
         let passed = false;
         try {
-          passed = Boolean(this.eval.visit(predicate));
+          // expr? — a rule without a condition always matches (same as ruleflow-java)
+          passed = predicate ? Boolean(this.eval.visit(predicate)) : true;
         } catch (e: any) {
           warnings.push(this.formatWarning(`Rule predicate ${this.getName(rule.name())}`, e));
           continue;
@@ -87,12 +88,18 @@ export class RulesetVisitor {
               continue;
             }
 
+            // THEN ... CONTINUE: accumulate the THEN actions and keep evaluating
+            if (ruleBody.K_THEN?.() && ruleBody.K_CONTINUE?.()) {
+              accumulatedActions.push(...this.collectActions(ruleBody, warnings));
+              continue;
+            }
+
             // Handle CONTINUE: variables are set, move to next rule/ruleset
             if (ruleBody.K_CONTINUE?.()) {
               continue;
             }
 
-            const result = this.resolveRuleResult(ruleBody);
+            const result = this.resolveRuleResult(ruleBody, this.getName(rule.name()));
             const ruleActions = this.collectActions(ruleBody, warnings);
             const actions = [...accumulatedActions, ...ruleActions];
 
@@ -160,10 +167,14 @@ export class RulesetVisitor {
     };
   }
 
-  private resolveRuleResult(ruleBody: any): string {
+  /**
+   * Result of a matched rule. Without a return_result (`THEN actions` or a bare `RETURN`)
+   * the rule name is the result, as in ruleflow-java.
+   */
+  private resolveRuleResult(ruleBody: any, ruleName: string): string {
     const ret = ruleBody.return_result?.();
     if (ret) return this.resolveReturn(ret);
-    return 'allow';
+    return ruleName;
   }
 
   private resolveReturn(ret: any): string {
