@@ -18,7 +18,7 @@ ruleset_condition: expr K_THEN | L_PAREN expr R_PAREN K_THEN;
 
 rules: name L_PAREN? rule_body R_PAREN?;
 
-rule_body: expr set_clause* ((K_THEN (K_WITH| K_AND)?  then_result = actions) | (K_RETURN result = return_result actions?) | (inline_actions=actions K_CONTINUE) | K_CONTINUE);
+rule_body: expr? set_clause* ((K_THEN (K_WITH | K_AND)? then_result=actions K_CONTINUE?) | (K_RETURN result=return_result? actions?) | (inline_actions=actions K_CONTINUE) | K_CONTINUE);
 
 set_clause: K_SET variable=VARIABLE EQ_IC expr
           | K_SET variable=VARIABLE compound_op=(PLUS_EQ | MINUS_EQ | MULTIPLY_EQ | DIVIDE_EQ | MODULO_EQ) expr;
